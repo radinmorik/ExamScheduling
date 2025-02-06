@@ -17,6 +17,13 @@ public class MainFrame extends JFrame{
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+
+        // Legg til ulike paneler
+        ExamPanel examPanel = new ExamPanel();
+
+        mainPanel.add(examPanel, "Exams");
+
+        add(mainPanel);
     }
 
 }
