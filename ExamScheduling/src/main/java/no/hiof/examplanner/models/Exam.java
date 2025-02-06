@@ -1,4 +1,4 @@
-package org.example.models;
+package no.hiof.examplanner.models;
 
 import java.time.LocalDateTime;
 
