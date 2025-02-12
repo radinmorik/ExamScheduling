@@ -8,9 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,7 +52,7 @@ public class Importer {
             String examType = getCellValue(row.getCell(2));
             String honorar = getCellValue(row.getCell(3));
             String platform = getCellValue(row.getCell(4));
-            LocalDateTime examDate = getDateFromCell(row.getCell(5)); // Handle LocalDateTime
+            List<LocalDateTime> examDates = Exam.parseExamDates(getCellValue(row.getCell(5))); // Handle multiple dates
             String responsible = getCellValue(row.getCell(6));
             String internalSensor = getCellValue(row.getCell(7));
             String internalSensor2 = getCellValue(row.getCell(8));
@@ -62,7 +60,7 @@ public class Importer {
             String honorar2 = getCellValue(row.getCell(10));
             String comment = getCellValue(row.getCell(11));
 
-            return new Exam(courseCode, courseName, examType, honorar, platform, examDate,
+            return new Exam(courseCode, courseName, examType, honorar, platform, examDates,
                     responsible, internalSensor, internalSensor2, externalSensor, honorar2, comment);
 
         } catch (Exception e) {
@@ -78,7 +76,7 @@ public class Importer {
                 return cell.getStringCellValue().trim();
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    return new SimpleDateFormat("MM-dd-yyyy").format(cell.getDateCellValue());
+                    return new SimpleDateFormat("dd.MM.yyyy HH:mm").format(cell.getDateCellValue());
                 } else {
                     return String.valueOf((int) cell.getNumericCellValue());
                 }
@@ -87,13 +85,6 @@ public class Importer {
             default:
                 return "";
         }
-    }
-
-    private LocalDateTime getDateFromCell(Cell cell) {
-        if (cell != null && DateUtil.isCellDateFormatted(cell)) {
-            return cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        }
-        return null;
     }
 
     private void printExams() {
