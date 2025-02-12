@@ -48,9 +48,15 @@ public class Importer {
 
                 if (Pattern.matches(subjectCodePattern, cellValue)) {
                     System.out.println();
+                    /*
                     for (Cell cell : row) {
                         printCellValue(cell);
                         System.out.print("\t");
+                    }
+                    */
+                    Exam exam = createExamFromRow(row);
+                    if (exam != null) {
+                        exams.add(exam);
                     }
                 }
             }
@@ -148,6 +154,7 @@ public class Importer {
 
             Importer reader = new Importer(excelFile);
             reader.importExcelToObjects();
+            reader.printExams();
         } catch (InvalidFormatException | IOException e) {
             System.out.println("Feil ved lesing av fil: " + e.getMessage());
         }

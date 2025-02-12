@@ -1,6 +1,3 @@
-
-/*
-
 package no.hiof.examplanner;
 
 
@@ -20,6 +17,3 @@ public class ConsoleApplication {
         scanner.close();
     }
 }
-
-*/
-
