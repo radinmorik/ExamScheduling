@@ -1,4 +1,9 @@
+
+/*
+
 package no.hiof.examplanner;
+
+
 
 import no.hiof.examplanner.tools.Importer;
 import java.util.Scanner;
@@ -15,3 +20,6 @@ public class ConsoleApplication {
         scanner.close();
     }
 }
+
+*/
+
