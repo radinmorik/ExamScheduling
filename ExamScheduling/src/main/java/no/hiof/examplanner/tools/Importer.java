@@ -3,6 +3,7 @@ package no.hiof.examplanner.tools;
 import no.hiof.examplanner.models.Exam;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,23 +15,66 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import java.util.regex.Pattern;
+
 public class Importer {
 
     private Workbook workbook;
     private Sheet sheet;
     private List<Exam> exams; // ArrayList to store Exam objects
 
+    public String subjectCodePattern = "^[A-Z]{3}\\d{5}";
+
     public Importer(File excelFile) throws InvalidFormatException, IOException {
-        workbook = WorkbookFactory.create(excelFile);
+        workbook = new XSSFWorkbook(excelFile);
         sheet = workbook.getSheetAt(0);
         exams = new ArrayList<>();
     }
 
+    /*
     public static void main(String[] args) throws InvalidFormatException, IOException {
         File excelFile = new File("C:\\Users\\Shvan\\Desktop\\excel_host24.xlsx");
         Importer importer = new Importer(excelFile);
         importer.readFromExcelFile();
         importer.printExams();
+    }
+    */
+
+    private void importExcelToObjects() throws IOException {
+
+        // find rows with exams
+        for (Row row : sheet) {
+            Cell firstCell = row.getCell(0);
+            if (firstCell != null && firstCell.getCellType() == CellType.STRING) {
+                String cellValue = firstCell.getStringCellValue().trim();
+
+                if (Pattern.matches(subjectCodePattern, cellValue)) {
+                    System.out.println();
+                    for (Cell cell : row) {
+                        printCellValue(cell);
+                        System.out.print("\t");
+                    }
+                }
+            }
+        }
+        workbook.close();
+    }
+
+    private void printCellValue(Cell cell) {
+        switch (cell.getCellType()) {
+            case STRING:
+                System.out.print(cell.getStringCellValue());
+                break;
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    System.out.print(new SimpleDateFormat("MM-dd-yyyy").format(cell.getDateCellValue()));
+                } else {
+                    System.out.print((int) cell.getNumericCellValue());
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void readFromExcelFile() throws IOException {
@@ -99,6 +143,22 @@ public class Importer {
     private void printExams() {
         for (Exam exam : exams) {
             System.out.println(exam);
+        }
+    }
+
+    public static void importFromFile(String filePath) {
+        try {
+            File excelFile = new File(filePath);
+
+            if (!excelFile.exists() || !excelFile.isFile()) {
+                System.out.println("Feil: Filen finnes ikke eller er ikke en gyldig fil!");
+                return;
+            }
+
+            Importer reader = new Importer(excelFile);
+            reader.importExcelToObjects();
+        } catch (InvalidFormatException | IOException e) {
+            System.out.println("Feil ved lesing av fil: " + e.getMessage());
         }
     }
 }
