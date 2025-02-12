@@ -18,11 +18,13 @@ public class Importer {
         sheet = workbook.getSheetAt(0);
     }
 
+    /* TO BE DELETED. Bruker main metode i ConsoleApplication isteden.
     public static void main(String[] args) throws InvalidFormatException, IOException {
-        File excelFile = new File("C:\\Users\\Shvan\\Desktop\\excel_host24.xlsx");
+        File excelFile = new File("/Users/radin/Documents/excel_høst24.xlsx");
         no.hiof.examplanner.tools.Importer reader = new no.hiof.examplanner.tools.Importer(excelFile);
         reader.readFromExcelFile();
     }
+     */
 
     private void readFromExcelFile() throws IOException {
         for (Row row : sheet) {
@@ -49,6 +51,22 @@ public class Importer {
                 break;
             default:
                 break;
+        }
+    }
+
+    public static void importFromFile(String filePath) {
+        try {
+            File excelFile = new File(filePath);
+
+            if (!excelFile.exists() || !excelFile.isFile()) {
+                System.out.println("Feil: Filen finnes ikke eller er ikke en gyldig fil!");
+                return;
+            }
+
+            Importer reader = new Importer(excelFile);
+            reader.readFromExcelFile();
+        } catch (InvalidFormatException | IOException e) {
+            System.out.println("Feil ved lesing av fil: " + e.getMessage());
         }
     }
 }
