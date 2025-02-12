@@ -15,7 +15,7 @@ public class Importer {
     private Workbook workbook;
     private Sheet sheet;
 
-    public String subjectCodePattern = "^[A-Z]{3}\\\\d{5}";
+    public String subjectCodePattern = "^[A-Z]{3}\\d{5}";
 
     private Importer(File excelFile) throws InvalidFormatException, IOException {
         workbook = new XSSFWorkbook(excelFile);
@@ -28,23 +28,27 @@ public class Importer {
         Importer reader = new Importer(excelFile);
         reader.importExcelToObjects();
     }
+     */
 
     private void importExcelToObjects() throws IOException {
 
         // find rows with exams
         for (Row row : sheet) {
             Cell firstCell = row.getCell(0);
-            if (Pattern.matches(subjectCodePattern, firstCell.getStringCellValue().trim())){
-                System.out.println();
-                for (Cell cell : row) {
-                    printCellValue(cell);
-                    System.out.print("\t");
+            if (firstCell != null && firstCell.getCellType() == CellType.STRING) {
+                String cellValue = firstCell.getStringCellValue().trim();
+
+                if (Pattern.matches(subjectCodePattern, cellValue)) {
+                    System.out.println();
+                    for (Cell cell : row) {
+                        printCellValue(cell);
+                        System.out.print("\t");
+                    }
                 }
             }
         }
         workbook.close();
     }
-     */
 
     private void readFromExcelFile() throws IOException {
         for (Row row : sheet) {
@@ -84,7 +88,7 @@ public class Importer {
             }
 
             Importer reader = new Importer(excelFile);
-            reader.readFromExcelFile();
+            reader.importExcelToObjects();
         } catch (InvalidFormatException | IOException e) {
             System.out.println("Feil ved lesing av fil: " + e.getMessage());
         }
