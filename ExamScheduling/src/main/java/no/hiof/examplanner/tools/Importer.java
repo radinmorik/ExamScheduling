@@ -8,10 +8,14 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.util.regex.Pattern;
+
 public class Importer {
 
     private Workbook workbook;
     private Sheet sheet;
+
+    public String subjectCodePattern = "^[A-Z]{3}\\\\d{5}";
 
     private Importer(File excelFile) throws InvalidFormatException, IOException {
         workbook = new XSSFWorkbook(excelFile);
@@ -19,9 +23,25 @@ public class Importer {
     }
 
     public static void main(String[] args) throws InvalidFormatException, IOException {
-        File excelFile = new File("C:\\Users\\Shvan\\Desktop\\excel_host24.xlsx");
-        no.hiof.examplanner.tools.Importer reader = new no.hiof.examplanner.tools.Importer(excelFile);
-        reader.readFromExcelFile();
+        File excelFile = new File("C:\\Users\\olema\\Desktop\\excel_host24.xlsx");
+        Importer reader = new Importer(excelFile);
+        reader.importExcelToObjects();
+    }
+
+    private void importExcelToObjects() throws IOException {
+
+        // find rows with exams
+        for (Row row : sheet) {
+            Cell firstCell = row.getCell(0);
+            if (Pattern.matches(subjectCodePattern, firstCell.getStringCellValue().trim())){
+                System.out.println();
+                for (Cell cell : row) {
+                    printCellValue(cell);
+                    System.out.print("\t");
+                }
+            }
+        }
+        workbook.close();
     }
 
     private void readFromExcelFile() throws IOException {
