@@ -1,0 +1,47 @@
+Index: src/main/java/no/hiof/examplanner/tools/GraphColoring/GraphColoringAlgorithm.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package no.hiof.examplanner.tools.GraphColoring;\n\npublic class GraphColoringAlgorithm {\n}\n
+===================================================================
+diff --git a/src/main/java/no/hiof/examplanner/tools/GraphColoring/GraphColoringAlgorithm.java b/src/main/java/no/hiof/examplanner/tools/GraphColoring/GraphColoringAlgorithm.java
+--- a/src/main/java/no/hiof/examplanner/tools/GraphColoring/GraphColoringAlgorithm.java	(revision f8cb6e1b2627ce85851f29f4ac985f89f2526375)
++++ b/src/main/java/no/hiof/examplanner/tools/GraphColoring/GraphColoringAlgorithm.java	(date 1740580130962)
+@@ -1,4 +1,38 @@
+ package no.hiof.examplanner.tools.GraphColoring;
+ 
++import java.time.LocalDate;
++import java.util.*;
++import no.hiof.examplanner.models.Exam;
++
+ public class GraphColoringAlgorithm {
++    private List<Exam> exams;
++    private Map<Exam, List<Exam>> adjacencyList;
++    private Map<Exam, LocalDate> examSchedule;
++    private List<LocalDate> availableDates;
++
++    public GraphColoringAlgorithm(List<Exam> exams, List<LocalDate> availableDates) {
++        this.exams = exams;
++        this.availableDates = availableDates;
++        this.adjacencyList = new HashMap<>();
++        this.examSchedule = new HashMap<>();
++        buildGraph();
++    }
++
++    // Step 1: Build Graph (conflict detection)
++    private void buildGraph() {
++        for (Exam exam1 : exams) {
++            adjacencyList.putIfAbsent(exam1, new ArrayList<>());
++            for (Exam exam2 : exams) {
++                if (!exam1.equals(exam2) && hasConflict(exam1, exam2)) {
++                    adjacencyList.get(exam1).add(exam2);
++                }
++            }
++        }
++    }
++
++    private boolean hasConflict(Exam e1, Exam e2) {
++        // Conflict if the courses belong to the same program or have overlapping students
++        return e1.getCourseCode().equals(e2.getCourseCode());
++    }
++
+ }
